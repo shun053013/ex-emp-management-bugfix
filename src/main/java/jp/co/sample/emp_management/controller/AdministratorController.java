@@ -88,8 +88,8 @@ public class AdministratorController {
 		// フォームからドメインにプロパティ値をコピー
 		BeanUtils.copyProperties(form, administrator);
 		administratorService.insert(administrator);
-		   return "administrator/login";
 		
+		return "administrator/login";
 			
 		}
 	}
@@ -124,6 +124,9 @@ public class AdministratorController {
 			model.addAttribute("errorMessage", "メールアドレスまたはパスワードが不正です。");
 			return toLogin();
 		}
+		String administratorName = administratorRepository.findByMailAddress(form.getMailAddress()).getName();
+		session.setAttribute("administratorName",administratorName );
+		
 		return "forward:/employee/showList";
 	}
 

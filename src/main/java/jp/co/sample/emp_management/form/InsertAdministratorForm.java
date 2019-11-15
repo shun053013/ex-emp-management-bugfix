@@ -21,7 +21,15 @@ public class InsertAdministratorForm {
 	@NotBlank(message="入力は必須です")
 	private String password1;
 	
+	private String token;
 	
+	
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
 	public String getPassword1() {
 		return password1;
 	}

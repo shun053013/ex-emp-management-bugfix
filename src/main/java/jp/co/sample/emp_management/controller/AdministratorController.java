@@ -1,5 +1,7 @@
 package jp.co.sample.emp_management.controller;
 
+import java.util.UUID;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.BeanUtils;
@@ -61,6 +63,10 @@ public class AdministratorController {
 	 */
 	@RequestMapping("/toInsert")
 	public String toInsert() {
+		UUID uuid = UUID.randomUUID();
+		String token = uuid.toString();
+		session.setAttribute("token", token);
+
 		return "administrator/insert";
 	}
 
@@ -71,29 +77,32 @@ public class AdministratorController {
 	 * @return ログイン画面へリダイレクト
 	 */
 	@RequestMapping("/insert")
-	public String insert(@Validated InsertAdministratorForm form, BindingResult result) {
-		if(form.getMailAddress().equals(administratorRepository.findByMailAddress(form.getMailAddress()))){
-			result.rejectValue("mailAddress",null,"登録されたメールアドレスです");
+	public String insert(@Validated InsertAdministratorForm form, BindingResult result, String token) {
+		String sessionToken = (String) session.getAttribute("token");
+		Administrator existAdministrator = administratorRepository.findByMailAddress(form.getMailAddress());
+		if (existAdministrator!=null) {
+			result.rejectValue("mailAddress", null, "登録されたメールアドレスです");
+//			return "administrator/insert";
+		}
+		if (!form.getPassword().equals(form.getPassword1())) {
+			result.rejectValue("password1", null, "登録するパスワードが間違っています");
+//			return "administrator/insert";
+
+		}
+		if (result.hasErrors()) {
+
 			return "administrator/insert";
-		}if(!form.getPassword().equals(form.getPassword1())){
-			result.rejectValue("password1",null,"登録するパスワードが間違っています");
-				return "administrator/insert";
-				
-		}if(result.hasErrors()) {
-			
-			return "administrator/insert";
-		
-		}else {
+
+		}
+//		if (form.getMailAddress().equals(existAdministrator)) {
 		Administrator administrator = new Administrator();
 		// フォームからドメインにプロパティ値をコピー
 		BeanUtils.copyProperties(form, administrator);
 		administratorService.insert(administrator);
-		
+
 		return "administrator/login";
-			
-		}
+
 	}
-		
 
 	
 
@@ -125,8 +134,8 @@ public class AdministratorController {
 			return toLogin();
 		}
 		String administratorName = administratorRepository.findByMailAddress(form.getMailAddress()).getName();
-		session.setAttribute("administratorName",administratorName );
-		
+		session.setAttribute("administratorName", administratorName);
+
 		return "forward:/employee/showList";
 	}
 

@@ -18,6 +18,16 @@ public class InsertAdministratorForm {
 	@NotBlank(message="入力は必須です")
 	/** パスワード */
 	private String password;
+	@NotBlank(message="入力は必須です")
+	private String password1;
+	
+	
+	public String getPassword1() {
+		return password1;
+	}
+	public void setPassword1(String password1) {
+		this.password1 = password1;
+	}
 	public String getName() {
 		return name;
 	}

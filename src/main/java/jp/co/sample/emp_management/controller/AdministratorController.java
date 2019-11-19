@@ -6,6 +6,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -78,7 +80,6 @@ public class AdministratorController {
 	 */
 	@RequestMapping("/insert")
 	public String insert(@Validated InsertAdministratorForm form, BindingResult result, String token) {
-		String sessionToken = (String) session.getAttribute("token");
 		Administrator existAdministrator = administratorRepository.findByMailAddress(form.getMailAddress());
 		if (existAdministrator!=null) {
 			result.rejectValue("mailAddress", null, "登録されたメールアドレスです");
@@ -152,5 +153,9 @@ public class AdministratorController {
 		session.invalidate();
 		return "redirect:/";
 	}
-
+	/*パスワード設定*/
+	
+	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	
+	
 }
